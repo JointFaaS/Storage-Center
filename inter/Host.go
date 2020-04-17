@@ -7,4 +7,5 @@ type Host interface {
 	Insert(host string, name string) error
 	Query(name string) (string, error)
 	Delete(name string) error
+	GetChan(name string) (chan string, error) 
 }

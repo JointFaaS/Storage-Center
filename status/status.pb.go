@@ -351,6 +351,100 @@ func (x *QueryReply) GetHost() string {
 	return ""
 }
 
+type InvalidRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+}
+
+func (x *InvalidRequest) Reset() {
+	*x = InvalidRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_status_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *InvalidRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InvalidRequest) ProtoMessage() {}
+
+func (x *InvalidRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_status_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InvalidRequest.ProtoReflect.Descriptor instead.
+func (*InvalidRequest) Descriptor() ([]byte, []int) {
+	return file_status_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *InvalidRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type InvalidReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Token string `protobuf:"bytes,1,opt,name=Token,proto3" json:"Token,omitempty"`
+}
+
+func (x *InvalidReply) Reset() {
+	*x = InvalidReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_status_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *InvalidReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*InvalidReply) ProtoMessage() {}
+
+func (x *InvalidReply) ProtoReflect() protoreflect.Message {
+	mi := &file_status_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use InvalidReply.ProtoReflect.Descriptor instead.
+func (*InvalidReply) Descriptor() ([]byte, []int) {
+	return file_status_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *InvalidReply) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
 var File_status_proto protoreflect.FileDescriptor
 
 var file_status_proto_rawDesc = []byte{
@@ -375,20 +469,30 @@ var file_status_proto_rawDesc = []byte{
 	0x65, 0x6e, 0x22, 0x36, 0x0a, 0x0a, 0x51, 0x75, 0x65, 0x72, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79,
 	0x12, 0x14, 0x0a, 0x05, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
 	0x05, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x12, 0x12, 0x0a, 0x04, 0x48, 0x6f, 0x73, 0x74, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x48, 0x6f, 0x73, 0x74, 0x32, 0xbd, 0x01, 0x0a, 0x0a, 0x4d,
-	0x61, 0x69, 0x6e, 0x74, 0x61, 0x69, 0x6e, 0x65, 0x72, 0x12, 0x3c, 0x0a, 0x08, 0x52, 0x65, 0x67,
-	0x69, 0x73, 0x74, 0x65, 0x72, 0x12, 0x17, 0x2e, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x2e, 0x52,
-	0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x15,
-	0x2e, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72,
-	0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3c, 0x0a, 0x0c, 0x43, 0x68, 0x61, 0x6e, 0x67,
-	0x65, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x15, 0x2e, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73,
-	0x2e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13,
-	0x2e, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x65,
-	0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x33, 0x0a, 0x05, 0x51, 0x75, 0x65, 0x72, 0x79, 0x12, 0x14,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x48, 0x6f, 0x73, 0x74, 0x22, 0x24, 0x0a, 0x0e, 0x49, 0x6e,
+	0x76, 0x61, 0x6c, 0x69, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x12, 0x0a, 0x04,
+	0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65,
+	0x22, 0x24, 0x0a, 0x0c, 0x49, 0x6e, 0x76, 0x61, 0x6c, 0x69, 0x64, 0x52, 0x65, 0x70, 0x6c, 0x79,
+	0x12, 0x14, 0x0a, 0x05, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x05, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x32, 0x84, 0x02, 0x0a, 0x0a, 0x4d, 0x61, 0x69, 0x6e, 0x74,
+	0x61, 0x69, 0x6e, 0x65, 0x72, 0x12, 0x3c, 0x0a, 0x08, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65,
+	0x72, 0x12, 0x17, 0x2e, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73,
+	0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x15, 0x2e, 0x73, 0x74, 0x61,
+	0x74, 0x75, 0x73, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x70, 0x6c,
+	0x79, 0x22, 0x00, 0x12, 0x40, 0x0a, 0x0c, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x53, 0x74, 0x61,
+	0x74, 0x75, 0x73, 0x12, 0x15, 0x2e, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x2e, 0x53, 0x74, 0x61,
+	0x74, 0x75, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e, 0x73, 0x74, 0x61,
+	0x74, 0x75, 0x73, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x28, 0x01, 0x30, 0x01, 0x12, 0x37, 0x0a, 0x05, 0x51, 0x75, 0x65, 0x72, 0x79, 0x12, 0x14,
 	0x2e, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x52, 0x65, 0x71,
 	0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x2e, 0x51, 0x75,
-	0x65, 0x72, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x42, 0x0a, 0x5a, 0x08, 0x2e, 0x3b,
-	0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x65, 0x72, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x28, 0x01, 0x30, 0x01, 0x12, 0x3d,
+	0x0a, 0x07, 0x49, 0x6e, 0x76, 0x61, 0x6c, 0x69, 0x64, 0x12, 0x16, 0x2e, 0x73, 0x74, 0x61, 0x74,
+	0x75, 0x73, 0x2e, 0x49, 0x6e, 0x76, 0x61, 0x6c, 0x69, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x14, 0x2e, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x2e, 0x49, 0x6e, 0x76, 0x61, 0x6c,
+	0x69, 0x64, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x28, 0x01, 0x30, 0x01, 0x42, 0x0a, 0x5a,
+	0x08, 0x2e, 0x3b, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (
@@ -403,7 +507,7 @@ func file_status_proto_rawDescGZIP() []byte {
 	return file_status_proto_rawDescData
 }
 
-var file_status_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_status_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_status_proto_goTypes = []interface{}{
 	(*RegisterRequest)(nil), // 0: status.RegisterRequest
 	(*RegisterReply)(nil),   // 1: status.RegisterReply
@@ -411,16 +515,20 @@ var file_status_proto_goTypes = []interface{}{
 	(*StatusReply)(nil),     // 3: status.StatusReply
 	(*QueryRequest)(nil),    // 4: status.QueryRequest
 	(*QueryReply)(nil),      // 5: status.QueryReply
+	(*InvalidRequest)(nil),  // 6: status.InvalidRequest
+	(*InvalidReply)(nil),    // 7: status.InvalidReply
 }
 var file_status_proto_depIdxs = []int32{
 	0, // 0: status.Maintainer.Register:input_type -> status.RegisterRequest
 	2, // 1: status.Maintainer.ChangeStatus:input_type -> status.StatusRequest
 	4, // 2: status.Maintainer.Query:input_type -> status.QueryRequest
-	1, // 3: status.Maintainer.Register:output_type -> status.RegisterReply
-	3, // 4: status.Maintainer.ChangeStatus:output_type -> status.StatusReply
-	5, // 5: status.Maintainer.Query:output_type -> status.QueryReply
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	6, // 3: status.Maintainer.Invalid:input_type -> status.InvalidRequest
+	1, // 4: status.Maintainer.Register:output_type -> status.RegisterReply
+	3, // 5: status.Maintainer.ChangeStatus:output_type -> status.StatusReply
+	5, // 6: status.Maintainer.Query:output_type -> status.QueryReply
+	7, // 7: status.Maintainer.Invalid:output_type -> status.InvalidReply
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -504,6 +612,30 @@ func file_status_proto_init() {
 				return nil
 			}
 		}
+		file_status_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*InvalidRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_status_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*InvalidReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -511,7 +643,7 @@ func file_status_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_status_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -538,8 +670,9 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MaintainerClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
-	ChangeStatus(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*StatusReply, error)
-	Query(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryReply, error)
+	ChangeStatus(ctx context.Context, opts ...grpc.CallOption) (Maintainer_ChangeStatusClient, error)
+	Query(ctx context.Context, opts ...grpc.CallOption) (Maintainer_QueryClient, error)
+	Invalid(ctx context.Context, opts ...grpc.CallOption) (Maintainer_InvalidClient, error)
 }
 
 type maintainerClient struct {
@@ -559,29 +692,105 @@ func (c *maintainerClient) Register(ctx context.Context, in *RegisterRequest, op
 	return out, nil
 }
 
-func (c *maintainerClient) ChangeStatus(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*StatusReply, error) {
-	out := new(StatusReply)
-	err := c.cc.Invoke(ctx, "/status.Maintainer/ChangeStatus", in, out, opts...)
+func (c *maintainerClient) ChangeStatus(ctx context.Context, opts ...grpc.CallOption) (Maintainer_ChangeStatusClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Maintainer_serviceDesc.Streams[0], "/status.Maintainer/ChangeStatus", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &maintainerChangeStatusClient{stream}
+	return x, nil
 }
 
-func (c *maintainerClient) Query(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryReply, error) {
-	out := new(QueryReply)
-	err := c.cc.Invoke(ctx, "/status.Maintainer/Query", in, out, opts...)
+type Maintainer_ChangeStatusClient interface {
+	Send(*StatusRequest) error
+	Recv() (*StatusReply, error)
+	grpc.ClientStream
+}
+
+type maintainerChangeStatusClient struct {
+	grpc.ClientStream
+}
+
+func (x *maintainerChangeStatusClient) Send(m *StatusRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *maintainerChangeStatusClient) Recv() (*StatusReply, error) {
+	m := new(StatusReply)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *maintainerClient) Query(ctx context.Context, opts ...grpc.CallOption) (Maintainer_QueryClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Maintainer_serviceDesc.Streams[1], "/status.Maintainer/Query", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &maintainerQueryClient{stream}
+	return x, nil
+}
+
+type Maintainer_QueryClient interface {
+	Send(*QueryRequest) error
+	Recv() (*QueryReply, error)
+	grpc.ClientStream
+}
+
+type maintainerQueryClient struct {
+	grpc.ClientStream
+}
+
+func (x *maintainerQueryClient) Send(m *QueryRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *maintainerQueryClient) Recv() (*QueryReply, error) {
+	m := new(QueryReply)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *maintainerClient) Invalid(ctx context.Context, opts ...grpc.CallOption) (Maintainer_InvalidClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Maintainer_serviceDesc.Streams[2], "/status.Maintainer/Invalid", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &maintainerInvalidClient{stream}
+	return x, nil
+}
+
+type Maintainer_InvalidClient interface {
+	Send(*InvalidRequest) error
+	Recv() (*InvalidReply, error)
+	grpc.ClientStream
+}
+
+type maintainerInvalidClient struct {
+	grpc.ClientStream
+}
+
+func (x *maintainerInvalidClient) Send(m *InvalidRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *maintainerInvalidClient) Recv() (*InvalidReply, error) {
+	m := new(InvalidReply)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // MaintainerServer is the server API for Maintainer service.
 type MaintainerServer interface {
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
-	ChangeStatus(context.Context, *StatusRequest) (*StatusReply, error)
-	Query(context.Context, *QueryRequest) (*QueryReply, error)
+	ChangeStatus(Maintainer_ChangeStatusServer) error
+	Query(Maintainer_QueryServer) error
+	Invalid(Maintainer_InvalidServer) error
 }
 
 // UnimplementedMaintainerServer can be embedded to have forward compatible implementations.
@@ -591,11 +800,14 @@ type UnimplementedMaintainerServer struct {
 func (*UnimplementedMaintainerServer) Register(context.Context, *RegisterRequest) (*RegisterReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
-func (*UnimplementedMaintainerServer) ChangeStatus(context.Context, *StatusRequest) (*StatusReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ChangeStatus not implemented")
+func (*UnimplementedMaintainerServer) ChangeStatus(Maintainer_ChangeStatusServer) error {
+	return status.Errorf(codes.Unimplemented, "method ChangeStatus not implemented")
 }
-func (*UnimplementedMaintainerServer) Query(context.Context, *QueryRequest) (*QueryReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Query not implemented")
+func (*UnimplementedMaintainerServer) Query(Maintainer_QueryServer) error {
+	return status.Errorf(codes.Unimplemented, "method Query not implemented")
+}
+func (*UnimplementedMaintainerServer) Invalid(Maintainer_InvalidServer) error {
+	return status.Errorf(codes.Unimplemented, "method Invalid not implemented")
 }
 
 func RegisterMaintainerServer(s *grpc.Server, srv MaintainerServer) {
@@ -620,40 +832,82 @@ func _Maintainer_Register_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Maintainer_ChangeStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StatusRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MaintainerServer).ChangeStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/status.Maintainer/ChangeStatus",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MaintainerServer).ChangeStatus(ctx, req.(*StatusRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+func _Maintainer_ChangeStatus_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(MaintainerServer).ChangeStatus(&maintainerChangeStatusServer{stream})
 }
 
-func _Maintainer_Query_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryRequest)
-	if err := dec(in); err != nil {
+type Maintainer_ChangeStatusServer interface {
+	Send(*StatusReply) error
+	Recv() (*StatusRequest, error)
+	grpc.ServerStream
+}
+
+type maintainerChangeStatusServer struct {
+	grpc.ServerStream
+}
+
+func (x *maintainerChangeStatusServer) Send(m *StatusReply) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *maintainerChangeStatusServer) Recv() (*StatusRequest, error) {
+	m := new(StatusRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	if interceptor == nil {
-		return srv.(MaintainerServer).Query(ctx, in)
+	return m, nil
+}
+
+func _Maintainer_Query_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(MaintainerServer).Query(&maintainerQueryServer{stream})
+}
+
+type Maintainer_QueryServer interface {
+	Send(*QueryReply) error
+	Recv() (*QueryRequest, error)
+	grpc.ServerStream
+}
+
+type maintainerQueryServer struct {
+	grpc.ServerStream
+}
+
+func (x *maintainerQueryServer) Send(m *QueryReply) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *maintainerQueryServer) Recv() (*QueryRequest, error) {
+	m := new(QueryRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
 	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/status.Maintainer/Query",
+	return m, nil
+}
+
+func _Maintainer_Invalid_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(MaintainerServer).Invalid(&maintainerInvalidServer{stream})
+}
+
+type Maintainer_InvalidServer interface {
+	Send(*InvalidReply) error
+	Recv() (*InvalidRequest, error)
+	grpc.ServerStream
+}
+
+type maintainerInvalidServer struct {
+	grpc.ServerStream
+}
+
+func (x *maintainerInvalidServer) Send(m *InvalidReply) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *maintainerInvalidServer) Recv() (*InvalidRequest, error) {
+	m := new(InvalidRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MaintainerServer).Query(ctx, req.(*QueryRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return m, nil
 }
 
 var _Maintainer_serviceDesc = grpc.ServiceDesc{
@@ -664,15 +918,26 @@ var _Maintainer_serviceDesc = grpc.ServiceDesc{
 			MethodName: "Register",
 			Handler:    _Maintainer_Register_Handler,
 		},
+	},
+	Streams: []grpc.StreamDesc{
 		{
-			MethodName: "ChangeStatus",
-			Handler:    _Maintainer_ChangeStatus_Handler,
+			StreamName:    "ChangeStatus",
+			Handler:       _Maintainer_ChangeStatus_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
 		},
 		{
-			MethodName: "Query",
-			Handler:    _Maintainer_Query_Handler,
+			StreamName:    "Query",
+			Handler:       _Maintainer_Query_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "Invalid",
+			Handler:       _Maintainer_Invalid_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "status.proto",
 }

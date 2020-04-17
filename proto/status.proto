@@ -5,8 +5,9 @@ package status;
 
 service Maintainer {
     rpc Register(RegisterRequest) returns (RegisterReply) {}
-    rpc ChangeStatus(StatusRequest) returns (StatusReply) {}
-    rpc Query(QueryRequest) returns (QueryReply) {}
+    rpc ChangeStatus(stream StatusRequest) returns (stream StatusReply) {}
+    rpc Query(stream QueryRequest) returns (stream QueryReply) {}
+    rpc Invalid(stream InvalidRequest) returns (stream InvalidReply) {}
 }
 
 message RegisterRequest {
@@ -36,4 +37,12 @@ message QueryRequest {
 message QueryReply {
     string Token = 1;
     string Host = 2;
+}
+
+message InvalidRequest {
+    string name = 1;
+}
+
+message InvalidReply {
+    string Token = 1;
 }
