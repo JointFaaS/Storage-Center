@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+option go_package = ".;server";
+package status;
+
+service Maintainer {
+    rpc Register(RegisterRequest) returns (RegisterReply) {}
+    rpc ChangeStatus(StatusRequest) returns (StatusReply) {}
+    rpc Query(QueryRequest) returns (QueryReply) {}
+}
+
+message RegisterRequest {
+    string Name = 1;
+    string Host = 2;
+}
+
+message RegisterReply {
+    int32 Code = 1;
+    string Msg = 2;
+}
+
+message StatusRequest {
+    string Token = 1;
+    string Name = 2;
+}
+
+message StatusReply {
+    string Token = 1;
+    string Host = 2;
+}
+
+message QueryRequest {
+    string Token = 1;
+}
+
+message QueryReply {
+    string Token = 1;
+    string Host = 2;
+}
