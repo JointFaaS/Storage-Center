@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-option go_package = ".;server";
+option go_package = ".;status";
 package status;
 
 service Maintainer {
     rpc Register(RegisterRequest) returns (RegisterReply) {}
-    rpc ChangeStatus(stream StatusRequest) returns (stream StatusReply) {}
-    rpc Query(stream QueryRequest) returns (stream QueryReply) {}
+    rpc ChangeStatus(StatusRequest) returns (StatusReply) {}
+    rpc Query(QueryRequest) returns (QueryReply) {}
     rpc Invalid(stream InvalidRequest) returns (stream InvalidReply) {}
 }
 

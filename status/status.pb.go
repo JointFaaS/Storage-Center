@@ -4,7 +4,7 @@
 // 	protoc        v3.11.4
 // source: status.proto
 
-package server
+package status
 
 import (
 	context "context"
@@ -474,25 +474,24 @@ var file_status_proto_rawDesc = []byte{
 	0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65,
 	0x22, 0x24, 0x0a, 0x0c, 0x49, 0x6e, 0x76, 0x61, 0x6c, 0x69, 0x64, 0x52, 0x65, 0x70, 0x6c, 0x79,
 	0x12, 0x14, 0x0a, 0x05, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x05, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x32, 0x84, 0x02, 0x0a, 0x0a, 0x4d, 0x61, 0x69, 0x6e, 0x74,
+	0x05, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x32, 0xfc, 0x01, 0x0a, 0x0a, 0x4d, 0x61, 0x69, 0x6e, 0x74,
 	0x61, 0x69, 0x6e, 0x65, 0x72, 0x12, 0x3c, 0x0a, 0x08, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65,
 	0x72, 0x12, 0x17, 0x2e, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73,
 	0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x15, 0x2e, 0x73, 0x74, 0x61,
 	0x74, 0x75, 0x73, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x70, 0x6c,
-	0x79, 0x22, 0x00, 0x12, 0x40, 0x0a, 0x0c, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x53, 0x74, 0x61,
+	0x79, 0x22, 0x00, 0x12, 0x3c, 0x0a, 0x0c, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x53, 0x74, 0x61,
 	0x74, 0x75, 0x73, 0x12, 0x15, 0x2e, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x2e, 0x53, 0x74, 0x61,
 	0x74, 0x75, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e, 0x73, 0x74, 0x61,
 	0x74, 0x75, 0x73, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
-	0x00, 0x28, 0x01, 0x30, 0x01, 0x12, 0x37, 0x0a, 0x05, 0x51, 0x75, 0x65, 0x72, 0x79, 0x12, 0x14,
-	0x2e, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x52, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x2e, 0x51, 0x75,
-	0x65, 0x72, 0x79, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x28, 0x01, 0x30, 0x01, 0x12, 0x3d,
-	0x0a, 0x07, 0x49, 0x6e, 0x76, 0x61, 0x6c, 0x69, 0x64, 0x12, 0x16, 0x2e, 0x73, 0x74, 0x61, 0x74,
-	0x75, 0x73, 0x2e, 0x49, 0x6e, 0x76, 0x61, 0x6c, 0x69, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x1a, 0x14, 0x2e, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x2e, 0x49, 0x6e, 0x76, 0x61, 0x6c,
-	0x69, 0x64, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x28, 0x01, 0x30, 0x01, 0x42, 0x0a, 0x5a,
-	0x08, 0x2e, 0x3b, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x33,
+	0x00, 0x12, 0x33, 0x0a, 0x05, 0x51, 0x75, 0x65, 0x72, 0x79, 0x12, 0x14, 0x2e, 0x73, 0x74, 0x61,
+	0x74, 0x75, 0x73, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x1a, 0x12, 0x2e, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x2e, 0x51, 0x75, 0x65, 0x72, 0x79, 0x52,
+	0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x3d, 0x0a, 0x07, 0x49, 0x6e, 0x76, 0x61, 0x6c, 0x69,
+	0x64, 0x12, 0x16, 0x2e, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x2e, 0x49, 0x6e, 0x76, 0x61, 0x6c,
+	0x69, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x14, 0x2e, 0x73, 0x74, 0x61, 0x74,
+	0x75, 0x73, 0x2e, 0x49, 0x6e, 0x76, 0x61, 0x6c, 0x69, 0x64, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22,
+	0x00, 0x28, 0x01, 0x30, 0x01, 0x42, 0x0a, 0x5a, 0x08, 0x2e, 0x3b, 0x73, 0x74, 0x61, 0x74, 0x75,
+	0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -670,8 +669,8 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MaintainerClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
-	ChangeStatus(ctx context.Context, opts ...grpc.CallOption) (Maintainer_ChangeStatusClient, error)
-	Query(ctx context.Context, opts ...grpc.CallOption) (Maintainer_QueryClient, error)
+	ChangeStatus(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*StatusReply, error)
+	Query(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryReply, error)
 	Invalid(ctx context.Context, opts ...grpc.CallOption) (Maintainer_InvalidClient, error)
 }
 
@@ -692,70 +691,26 @@ func (c *maintainerClient) Register(ctx context.Context, in *RegisterRequest, op
 	return out, nil
 }
 
-func (c *maintainerClient) ChangeStatus(ctx context.Context, opts ...grpc.CallOption) (Maintainer_ChangeStatusClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Maintainer_serviceDesc.Streams[0], "/status.Maintainer/ChangeStatus", opts...)
+func (c *maintainerClient) ChangeStatus(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*StatusReply, error) {
+	out := new(StatusReply)
+	err := c.cc.Invoke(ctx, "/status.Maintainer/ChangeStatus", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &maintainerChangeStatusClient{stream}
-	return x, nil
+	return out, nil
 }
 
-type Maintainer_ChangeStatusClient interface {
-	Send(*StatusRequest) error
-	Recv() (*StatusReply, error)
-	grpc.ClientStream
-}
-
-type maintainerChangeStatusClient struct {
-	grpc.ClientStream
-}
-
-func (x *maintainerChangeStatusClient) Send(m *StatusRequest) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *maintainerChangeStatusClient) Recv() (*StatusReply, error) {
-	m := new(StatusReply)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (c *maintainerClient) Query(ctx context.Context, opts ...grpc.CallOption) (Maintainer_QueryClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Maintainer_serviceDesc.Streams[1], "/status.Maintainer/Query", opts...)
+func (c *maintainerClient) Query(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryReply, error) {
+	out := new(QueryReply)
+	err := c.cc.Invoke(ctx, "/status.Maintainer/Query", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &maintainerQueryClient{stream}
-	return x, nil
-}
-
-type Maintainer_QueryClient interface {
-	Send(*QueryRequest) error
-	Recv() (*QueryReply, error)
-	grpc.ClientStream
-}
-
-type maintainerQueryClient struct {
-	grpc.ClientStream
-}
-
-func (x *maintainerQueryClient) Send(m *QueryRequest) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *maintainerQueryClient) Recv() (*QueryReply, error) {
-	m := new(QueryReply)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
+	return out, nil
 }
 
 func (c *maintainerClient) Invalid(ctx context.Context, opts ...grpc.CallOption) (Maintainer_InvalidClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Maintainer_serviceDesc.Streams[2], "/status.Maintainer/Invalid", opts...)
+	stream, err := c.cc.NewStream(ctx, &_Maintainer_serviceDesc.Streams[0], "/status.Maintainer/Invalid", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -788,8 +743,8 @@ func (x *maintainerInvalidClient) Recv() (*InvalidReply, error) {
 // MaintainerServer is the server API for Maintainer service.
 type MaintainerServer interface {
 	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
-	ChangeStatus(Maintainer_ChangeStatusServer) error
-	Query(Maintainer_QueryServer) error
+	ChangeStatus(context.Context, *StatusRequest) (*StatusReply, error)
+	Query(context.Context, *QueryRequest) (*QueryReply, error)
 	Invalid(Maintainer_InvalidServer) error
 }
 
@@ -800,11 +755,11 @@ type UnimplementedMaintainerServer struct {
 func (*UnimplementedMaintainerServer) Register(context.Context, *RegisterRequest) (*RegisterReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
-func (*UnimplementedMaintainerServer) ChangeStatus(Maintainer_ChangeStatusServer) error {
-	return status.Errorf(codes.Unimplemented, "method ChangeStatus not implemented")
+func (*UnimplementedMaintainerServer) ChangeStatus(context.Context, *StatusRequest) (*StatusReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeStatus not implemented")
 }
-func (*UnimplementedMaintainerServer) Query(Maintainer_QueryServer) error {
-	return status.Errorf(codes.Unimplemented, "method Query not implemented")
+func (*UnimplementedMaintainerServer) Query(context.Context, *QueryRequest) (*QueryReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Query not implemented")
 }
 func (*UnimplementedMaintainerServer) Invalid(Maintainer_InvalidServer) error {
 	return status.Errorf(codes.Unimplemented, "method Invalid not implemented")
@@ -832,56 +787,40 @@ func _Maintainer_Register_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Maintainer_ChangeStatus_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(MaintainerServer).ChangeStatus(&maintainerChangeStatusServer{stream})
-}
-
-type Maintainer_ChangeStatusServer interface {
-	Send(*StatusReply) error
-	Recv() (*StatusRequest, error)
-	grpc.ServerStream
-}
-
-type maintainerChangeStatusServer struct {
-	grpc.ServerStream
-}
-
-func (x *maintainerChangeStatusServer) Send(m *StatusReply) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *maintainerChangeStatusServer) Recv() (*StatusRequest, error) {
-	m := new(StatusRequest)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
+func _Maintainer_ChangeStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StatusRequest)
+	if err := dec(in); err != nil {
 		return nil, err
 	}
-	return m, nil
+	if interceptor == nil {
+		return srv.(MaintainerServer).ChangeStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/status.Maintainer/ChangeStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MaintainerServer).ChangeStatus(ctx, req.(*StatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
-func _Maintainer_Query_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(MaintainerServer).Query(&maintainerQueryServer{stream})
-}
-
-type Maintainer_QueryServer interface {
-	Send(*QueryReply) error
-	Recv() (*QueryRequest, error)
-	grpc.ServerStream
-}
-
-type maintainerQueryServer struct {
-	grpc.ServerStream
-}
-
-func (x *maintainerQueryServer) Send(m *QueryReply) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *maintainerQueryServer) Recv() (*QueryRequest, error) {
-	m := new(QueryRequest)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
+func _Maintainer_Query_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryRequest)
+	if err := dec(in); err != nil {
 		return nil, err
 	}
-	return m, nil
+	if interceptor == nil {
+		return srv.(MaintainerServer).Query(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/status.Maintainer/Query",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MaintainerServer).Query(ctx, req.(*QueryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Maintainer_Invalid_Handler(srv interface{}, stream grpc.ServerStream) error {
@@ -918,20 +857,16 @@ var _Maintainer_serviceDesc = grpc.ServiceDesc{
 			MethodName: "Register",
 			Handler:    _Maintainer_Register_Handler,
 		},
+		{
+			MethodName: "ChangeStatus",
+			Handler:    _Maintainer_ChangeStatus_Handler,
+		},
+		{
+			MethodName: "Query",
+			Handler:    _Maintainer_Query_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "ChangeStatus",
-			Handler:       _Maintainer_ChangeStatus_Handler,
-			ServerStreams: true,
-			ClientStreams: true,
-		},
-		{
-			StreamName:    "Query",
-			Handler:       _Maintainer_Query_Handler,
-			ServerStreams: true,
-			ClientStreams: true,
-		},
 		{
 			StreamName:    "Invalid",
 			Handler:       _Maintainer_Invalid_Handler,
