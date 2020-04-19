@@ -2,6 +2,7 @@ package client
 
 
 import (
+	"fmt"
 	mapset "github.com/deckarep/golang-set"
 )
 
@@ -17,10 +18,13 @@ func (s *ClientStateImpl) Delete(token string) {
 
 // Query by token
 func (s *ClientStateImpl) Query(token string) bool {
+	fmt.Printf("query state value: %v\n", s.holds)
 	return s.holds.Contains(token)
 }
 
 // Add a token
 func (s *ClientStateImpl) Add(token string) bool {
-	return s.holds.Add(token)
+	result := s.holds.Add(token)
+	fmt.Printf("add state value: %v\n", s.holds)
+	return result
 }

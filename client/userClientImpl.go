@@ -1,6 +1,8 @@
 package client
 
 import (
+	"sync"
+	"context"
 	inter "github.com/JointFaaS/Storage-Center/inter"
 	pb "github.com/JointFaaS/Storage-Center/status"
 )
@@ -8,6 +10,9 @@ import (
 
 type UserClientImpl struct {
 	statusClient inter.StatusClient
+	rootContext context.Context 
+	finalizeFunc context.CancelFunc
+	wg sync.WaitGroup
 }
 
 func NewUserClientImpl(name string, clientHost string , serverHost string, c pb.MaintainerClient) UserClientImpl {
@@ -18,11 +23,17 @@ func NewUserClientImpl(name string, clientHost string , serverHost string, c pb.
 }
 
 func (c *UserClientImpl) Start() error {
-	err := c.statusClient.Start()
+	c.rootContext, c.finalizeFunc = context.WithCancel(context.Background())
+	err := c.statusClient.Start(c.rootContext, &c.wg)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (c *UserClientImpl) Close() {
+	c.finalizeFunc()
+	c.wg.Wait()
 }
 
 func (c *UserClientImpl) Get(token string) (string, error) {

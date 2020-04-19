@@ -1,9 +1,11 @@
 package client
 import (
-	"context"
+	"fmt"
 	"io"
 	"log"
+	"sync"
 	"errors"
+	"context"
 	"google.golang.org/grpc"
 	pb "github.com/JointFaaS/Storage-Center/status"
 	inter "github.com/JointFaaS/Storage-Center/inter"
@@ -34,7 +36,7 @@ func NewClientImpl(name string, clientHost string, serverHost string, c pb.Maint
 	}
 }
 
-func (c *ClientImpl) Start() error {
+func (c *ClientImpl) Start(ctx context.Context, wg *sync.WaitGroup) error {
 	// dail server
 	if (c.client == nil) {
 		conn, err := grpc.Dial(c.serverHost, grpc.WithInsecure())
@@ -45,7 +47,7 @@ func (c *ClientImpl) Start() error {
 		// create stream
 		c.client = pb.NewMaintainerClient(conn)
 	}
-	resp, err := c.client.Register(context.Background(), &pb.RegisterRequest{Name: c.name, Host: c.clientHost})
+	resp, err := c.client.Register(ctx, &pb.RegisterRequest{Name: c.name, Host: c.clientHost})
 	if err != nil {
 		log.Fatalf("openn stream error %v", err)
 	}
@@ -56,11 +58,10 @@ func (c *ClientImpl) Start() error {
 		return errors.New("register error");
 	}
 
-	
-	go func() {
-		invalidStream, err := c.client.Invalid(context.Background())
-		ctx := invalidStream.Context()
-		done := make(chan bool)
+	wg.Add(1)
+	go func(wg *sync.WaitGroup) {
+		defer wg.Done()
+		invalidStream, err := c.client.Invalid(ctx)
 		if err != nil {
 			log.Fatalf("openn stream error %v", err)
 		}
@@ -69,35 +70,34 @@ func (c *ClientImpl) Start() error {
 			log.Fatalf("can not send %v", err)
 		}
 
-		// nested goroutine closes done channel
-		// if context is done
-		go func() {
-			<-ctx.Done()
-			if err := ctx.Err(); err != nil {
-				log.Println(err)
-			}
-			close(done)
-		}()
-
 		for {
-			resp, err := invalidStream.Recv()
-			if err == io.EOF {
-				close(done)
-				return
-			}
-			if err != nil {
-				log.Fatalf("can not receive %v", err)
-			}
-			token := resp.Token
-			log.Printf("new invalid token %s received", token)
-			// delete line by token
-			c.state.Delete(token)
-			err = c.storage.Delete(token)
-			if err != nil {
-				log.Fatalf("can not delete %v in storage", err)
+			select {
+				case <-ctx.Done(): {
+					return;
+				}
+				default: {
+					resp, err := invalidStream.Recv()
+					if err == io.EOF {
+						return
+					}
+					if err != nil {
+						log.Fatalf("can not receive %v", err)
+					}
+					token := resp.Token
+					log.Printf("new invalid token %s received", token)
+					if (token == "") {
+						continue
+					}
+					// delete line by token
+					c.state.Delete(token)
+					err = c.storage.Delete(token)
+					if err != nil {
+						log.Fatalf("can not delete %v in storage", err)
+					}		
+				} 
 			}
 		}
-	}()
+	}(wg)
 	return nil
 }
 
@@ -118,9 +118,13 @@ func (c *ClientImpl) ChangeStatus(token string) error {
 		log.Fatalf("could not changeStatus: %v", err)
 		return err
 	}
+	fmt.Printf("resp.Host %v, clientHost %v\n", resp.Host, c.clientHost);
 	// TODO update state use resp.Token and resp.Host
 	if (resp.Host == c.clientHost) {
-		// we hold the 
+		// we hold the status
+		c.state.Add(resp.Token)
+		hold := c.state.Query(resp.Token)
+		fmt.Printf("after add into set %v\n", hold)
 	}
 	return nil
 }
@@ -128,6 +132,7 @@ func (c *ClientImpl) ChangeStatus(token string) error {
 func (c *ClientImpl) Query(token string) (string, error) {
 	// query local first holded means can read/write
 	holded := c.state.Query(token)
+	fmt.Printf("in query holded %v", holded)
 	if (holded) {
 		return c.storage.Get(token), nil
 	}
