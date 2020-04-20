@@ -29,9 +29,6 @@ func (h *HostImpl) Insert(host string, name string) error {
 	if exist {
 		return errors.New("The name already exists")
 	}
-	if h.hosts == nil {
-		h.hosts = make(map[string]StatusLine)
-	}
 	fmt.Printf("Insert %v\n", h.hosts)
 	fmt.Printf("Host %v, Name %v\n", host, name)
 	h.hosts[name] = StatusLine{

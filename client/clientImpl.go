@@ -95,23 +95,32 @@ func (c *ClientImpl) Start(ctx context.Context, wg *sync.WaitGroup) error {
 		// create stream
 		c.client = pb.NewMaintainerClient(conn)
 	}
-	resp, err := c.client.Register(ctx, &pb.RegisterRequest{Name: c.name, Host: c.clientHost + c.clientPort})
-	if err != nil {
-		log.Fatalf("openn stream error %v", err)
+	retry := 10
+	for ; retry > 0; retry-- {
+		resp, err := c.client.Register(ctx, &pb.RegisterRequest{Name: c.name, Host: c.clientHost + c.clientPort})
+		if err != nil {
+			log.Printf("open stream error %v", err)
+		}
+		if resp.Code > 0 {
+			log.Printf("register %s over", c.name)
+		} else {
+			log.Printf("register error : %s\n", resp.Msg)
+			return errors.New("register error")
+		}
+		break
 	}
-	if resp.Code > 0 {
-		log.Printf("register %s over", c.name)
-	} else {
-		log.Printf("register error : %s\n", resp.Msg)
-		return errors.New("register error")
+	if retry == 0 {
+		log.Fatalf("register error, closed")
+		return errors.New("connection refused")
 	}
 
 	wg.Add(1)
 	go func(wg *sync.WaitGroup) {
 		defer wg.Done()
-		retry := 0
+		retry = 10
 		var invalidStream pb.Maintainer_InvalidClient
-		for retry = 0; retry < 10; retry++ {
+		var err error
+		for ; retry > 0; retry-- {
 			invalidStream, err = c.client.Invalid(ctx)
 			if err != nil {
 				log.Printf("open stream error %v", err)
@@ -119,7 +128,8 @@ func (c *ClientImpl) Start(ctx context.Context, wg *sync.WaitGroup) error {
 			}
 			break
 		}
-		if retry == 10 {
+
+		if retry == 0 {
 			log.Println("error in stream open, close")
 			return
 		}
@@ -127,6 +137,7 @@ func (c *ClientImpl) Start(ctx context.Context, wg *sync.WaitGroup) error {
 		if err := invalidStream.Send(&pb.InvalidRequest{Name: c.name}); err != nil {
 			log.Fatalf("can not send %v", err)
 		}
+		retry = 10
 
 		for {
 			select {
@@ -142,8 +153,15 @@ func (c *ClientImpl) Start(ctx context.Context, wg *sync.WaitGroup) error {
 						return
 					}
 					if err != nil {
-						log.Fatalf("can not receive %v", err)
+						log.Printf("can not receive %v", err)
+						retry--
+						if retry == 0 {
+							log.Printf("can not receive, closed")
+							return
+						}
+						continue
 					}
+					retry = 10
 					token := resp.Token
 					// log.Printf("new invalid token %s received", token)
 					if token == "" {

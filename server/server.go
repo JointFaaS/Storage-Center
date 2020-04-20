@@ -24,7 +24,7 @@ func (s *RPCServer) Register(ctx context.Context, in *pb.RegisterRequest) (*pb.R
 	log.Println("request: Host", in.Host)
 	err := s.hosts.Insert(in.Host, in.Name)
 	if err != nil {
-		return &pb.RegisterReply{Code: -1, Msg: err.Error()}, err
+		return &pb.RegisterReply{Code: -1, Msg: err.Error()}, nil
 	}
 	return &pb.RegisterReply{Code: 1, Msg: "OK"}, nil
 }
