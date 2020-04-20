@@ -19,6 +19,7 @@ func NewUserClientImpl(name string, clientHost string, clientPort string, server
 	statusClient := NewClientImpl(name, clientHost, clientPort, serverHost, c)
 	return &UserClientImpl{
 		statusClient: &statusClient,
+		wg:           sync.WaitGroup{},
 	}
 }
 
@@ -33,15 +34,16 @@ func (c *UserClientImpl) Start() error {
 
 func (c *UserClientImpl) Close() {
 	c.finalizeFunc()
+
 	c.wg.Wait()
 }
 
 func (c *UserClientImpl) Get(token string) (string, error) {
-	return c.statusClient.Query(token)
+	return c.statusClient.Query(c.rootContext, token)
 }
 
 func (c *UserClientImpl) Set(token string, value string) error {
-	err := c.statusClient.ChangeStatus(token)
+	err := c.statusClient.ChangeStatus(c.rootContext, token)
 	if err != nil {
 		return err
 	}

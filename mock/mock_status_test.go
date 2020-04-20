@@ -1,34 +1,13 @@
 package mock_status
 
 import (
-	"fmt"
-
-	// "context"
 	"testing"
 
 	client "github.com/JointFaaS/Storage-Center/client"
 	inter "github.com/JointFaaS/Storage-Center/inter"
 	pb "github.com/JointFaaS/Storage-Center/status"
 	"github.com/golang/mock/gomock"
-	"github.com/golang/protobuf/proto"
 )
-
-// rpcMsg implements the gomock.Matcher interface
-type rpcMsg struct {
-	msg proto.Message
-}
-
-func (r *rpcMsg) Matches(msg interface{}) bool {
-	m, ok := msg.(proto.Message)
-	if !ok {
-		return false
-	}
-	return proto.Equal(m, r.msg)
-}
-
-func (r *rpcMsg) String() string {
-	return fmt.Sprintf("is %s", r.msg)
-}
 
 func Test_Init(t *testing.T) {
 	ctrl := gomock.NewController(t)

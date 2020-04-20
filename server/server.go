@@ -1,15 +1,12 @@
-package main
+package server
 
 import (
 	"io"
 	"log"
-	"net"
 
 	inter "github.com/JointFaaS/Storage-Center/inter"
-	state "github.com/JointFaaS/Storage-Center/state"
 	pb "github.com/JointFaaS/Storage-Center/status"
 	"golang.org/x/net/context"
-	"google.golang.org/grpc"
 )
 
 const (
@@ -17,12 +14,12 @@ const (
 	PORT = ":50000"
 )
 
-type server struct {
+type RPCServer struct {
 	state inter.State
 	hosts inter.Host
 }
 
-func (s *server) Register(ctx context.Context, in *pb.RegisterRequest) (*pb.RegisterReply, error) {
+func (s *RPCServer) Register(ctx context.Context, in *pb.RegisterRequest) (*pb.RegisterReply, error) {
 	log.Println("request: Name", in.Name)
 	log.Println("request: Host", in.Host)
 	err := s.hosts.Insert(in.Host, in.Name)
@@ -32,7 +29,7 @@ func (s *server) Register(ctx context.Context, in *pb.RegisterRequest) (*pb.Regi
 	return &pb.RegisterReply{Code: 1, Msg: "OK"}, nil
 }
 
-func (s *server) ChangeStatus(ctx context.Context, in *pb.StatusRequest) (*pb.StatusReply, error) {
+func (s *RPCServer) ChangeStatus(ctx context.Context, in *pb.StatusRequest) (*pb.StatusReply, error) {
 	for {
 
 		newname, oldname, err := s.state.ChangeStatus(in.Token, in.Name)
@@ -62,7 +59,7 @@ func (s *server) ChangeStatus(ctx context.Context, in *pb.StatusRequest) (*pb.St
 	// TODO announce to host => invalid
 }
 
-func (s *server) Query(ctx context.Context, in *pb.QueryRequest) (*pb.QueryReply, error) {
+func (s *RPCServer) Query(ctx context.Context, in *pb.QueryRequest) (*pb.QueryReply, error) {
 	//receive data from stream
 	name, err := s.state.Query(in.Token)
 	if err != nil {
@@ -76,7 +73,7 @@ func (s *server) Query(ctx context.Context, in *pb.QueryRequest) (*pb.QueryReply
 	return resp, nil
 }
 
-func (s *server) Invalid(srv pb.Maintainer_InvalidServer) error {
+func (s *RPCServer) Invalid(srv pb.Maintainer_InvalidServer) error {
 	ctx := srv.Context()
 	//receive data from stream
 	req, err := srv.Recv()
@@ -104,23 +101,6 @@ func (s *server) Invalid(srv pb.Maintainer_InvalidServer) error {
 				}
 				break
 			}
-		default:
 		}
 	}
-}
-
-func main() {
-	lis, err := net.Listen("tcp", PORT)
-
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-
-	s := grpc.NewServer()
-	pb.RegisterMaintainerServer(s, &server{
-		state: &state.StateImpl{},
-		hosts: &state.HostImpl{},
-	})
-	log.Println("rpc服务已经开启")
-	s.Serve(lis)
 }

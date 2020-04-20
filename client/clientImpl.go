@@ -109,9 +109,19 @@ func (c *ClientImpl) Start(ctx context.Context, wg *sync.WaitGroup) error {
 	wg.Add(1)
 	go func(wg *sync.WaitGroup) {
 		defer wg.Done()
-		invalidStream, err := c.client.Invalid(ctx)
-		if err != nil {
-			log.Fatalf("openn stream error %v", err)
+		retry := 0
+		var invalidStream pb.Maintainer_InvalidClient
+		for retry = 0; retry < 10; retry++ {
+			invalidStream, err = c.client.Invalid(ctx)
+			if err != nil {
+				log.Printf("open stream error %v", err)
+				continue
+			}
+			break
+		}
+		if retry == 10 {
+			log.Println("error in stream open, close")
+			return
 		}
 
 		if err := invalidStream.Send(&pb.InvalidRequest{Name: c.name}); err != nil {
@@ -127,6 +137,7 @@ func (c *ClientImpl) Start(ctx context.Context, wg *sync.WaitGroup) error {
 			default:
 				{
 					resp, err := invalidStream.Recv()
+					log.Printf("130")
 					if err == io.EOF {
 						return
 					}
@@ -151,7 +162,7 @@ func (c *ClientImpl) Start(ctx context.Context, wg *sync.WaitGroup) error {
 	return nil
 }
 
-func (c *ClientImpl) ChangeStatus(token string) error {
+func (c *ClientImpl) ChangeStatus(ctx context.Context, token string) error {
 	if c.client == nil {
 		return errors.New("client not init, should call Start first")
 	}
@@ -163,7 +174,7 @@ func (c *ClientImpl) ChangeStatus(token string) error {
 	}
 
 	// apply for permission
-	resp, err := c.client.ChangeStatus(context.Background(), &pb.StatusRequest{Token: token, Name: c.name})
+	resp, err := c.client.ChangeStatus(ctx, &pb.StatusRequest{Token: token, Name: c.name})
 	if err != nil {
 		log.Fatalf("could not changeStatus: %v", err)
 		return err
@@ -180,7 +191,7 @@ func (c *ClientImpl) ChangeStatus(token string) error {
 }
 
 // Query first query from local, if it does not exist, it will sync from others
-func (c *ClientImpl) Query(token string) (string, error) {
+func (c *ClientImpl) Query(ctx context.Context, token string) (string, error) {
 	// query local first holded means can read/write
 	holded := c.state.Query(token)
 	fmt.Printf("in query holded %v", holded)
@@ -191,7 +202,7 @@ func (c *ClientImpl) Query(token string) (string, error) {
 	if c.client == nil {
 		return "", errors.New("client not init, should call Start first")
 	}
-	resp, err := c.client.Query(context.Background(), &pb.QueryRequest{Token: token})
+	resp, err := c.client.Query(ctx, &pb.QueryRequest{Token: token})
 	if err != nil {
 		log.Fatalf("could not changeStatus: %v", err)
 		return "", err
@@ -211,11 +222,11 @@ func (c *ClientImpl) Query(token string) (string, error) {
 			log.Printf("sync server error: %v", err)
 			continue
 		}
-
 		return syncResp.Value, nil
 	}
 }
 
 func (c *ClientImpl) Set(token string, value string) {
 	c.storage.Set(token, value)
+	log.Printf("%v has set %v:%v\n", c.name, token, value)
 }

@@ -30,7 +30,8 @@ func (s *StorageImpl) Delete(token string) error {
 	s.Lock()
 	_, exist := s.storage[token]
 	if !exist {
-		return errors.New("the value of " + token + "is not exist")
+		return nil
+		// return errors.New("the value of " + token + " is not exist")
 	}
 	delete(s.storage, token)
 	s.Unlock()
