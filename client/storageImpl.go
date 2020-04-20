@@ -1,8 +1,8 @@
-package client 
+package client
 
 import (
-	"sync"
 	"errors"
+	"sync"
 )
 
 type StorageImpl struct {
@@ -10,20 +10,23 @@ type StorageImpl struct {
 	storage map[string]string
 }
 
-func (s *StorageImpl)Set(token string, value string) {
+func (s *StorageImpl) Set(token string, value string) {
 	s.Lock()
 	s.storage[token] = value
 	s.Unlock()
 }
 
-func (s *StorageImpl)Get(token string) string {
+func (s *StorageImpl) Get(token string) (string, error) {
 	s.RLock()
-	value := s.storage[token]
+	value, exist := s.storage[token]
 	s.RUnlock()
-	return value
+	if exist {
+		return value, nil
+	}
+	return "", errors.New("Not Found")
 }
 
-func (s *StorageImpl)Delete(token string) error {
+func (s *StorageImpl) Delete(token string) error {
 	s.Lock()
 	_, exist := s.storage[token]
 	if !exist {

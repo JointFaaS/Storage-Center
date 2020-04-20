@@ -1,23 +1,23 @@
 package client
 
 import (
-	"sync"
 	"context"
+	"sync"
+
 	inter "github.com/JointFaaS/Storage-Center/inter"
 	pb "github.com/JointFaaS/Storage-Center/status"
 )
 
-
 type UserClientImpl struct {
 	statusClient inter.StatusClient
-	rootContext context.Context 
+	rootContext  context.Context
 	finalizeFunc context.CancelFunc
-	wg sync.WaitGroup
+	wg           sync.WaitGroup
 }
 
-func NewUserClientImpl(name string, clientHost string , serverHost string, c pb.MaintainerClient) UserClientImpl {
-	statusClient := NewClientImpl(name, clientHost, serverHost, c)
-	return UserClientImpl{
+func NewUserClientImpl(name string, clientHost string, clientPort string, serverHost string, c pb.MaintainerClient) *UserClientImpl {
+	statusClient := NewClientImpl(name, clientHost, clientPort, serverHost, c)
+	return &UserClientImpl{
 		statusClient: &statusClient,
 	}
 }

@@ -1,20 +1,20 @@
 package main
 
 import (
-	"log"
 	"io"
-    "net"
-	
-	pb "github.com/JointFaaS/Storage-Center/status"
-	state "github.com/JointFaaS/Storage-Center/state"
+	"log"
+	"net"
+
 	inter "github.com/JointFaaS/Storage-Center/inter"
-    "google.golang.org/grpc"
-    "golang.org/x/net/context"
+	state "github.com/JointFaaS/Storage-Center/state"
+	pb "github.com/JointFaaS/Storage-Center/status"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
 )
 
 const (
-    // PORT defined for listen port
-    PORT = ":50001"
+	// PORT defined for listen port
+	PORT = ":50000"
 )
 
 type server struct {
@@ -32,24 +32,10 @@ func (s *server) Register(ctx context.Context, in *pb.RegisterRequest) (*pb.Regi
 	return &pb.RegisterReply{Code: 1, Msg: "OK"}, nil
 }
 
-func (s *server) ChangeStatus(srv pb.Maintainer_ChangeStatusServer) error {
-	ctx := srv.Context()
+func (s *server) ChangeStatus(ctx context.Context, in *pb.StatusRequest) (*pb.StatusReply, error) {
 	for {
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		default:
-		}
-		//receive data from stream
-		req, err := srv.Recv()
-		if err == io.EOF {
-			return nil
-		}
-		if err != nil {
-			log.Printf("ChangeStatus receive error %v", err)
-			continue
-		}
-		newname, oldname, err := s.state.ChangeStatus(req.Token, req.Name)
+
+		newname, oldname, err := s.state.ChangeStatus(in.Token, in.Name)
 		if err != nil {
 			panic(err)
 		}
@@ -59,61 +45,41 @@ func (s *server) ChangeStatus(srv pb.Maintainer_ChangeStatusServer) error {
 		}
 		if oldname != "" {
 			channel, err := s.hosts.GetChan(oldname)
-			channel <- req.Token
+			channel <- in.Token
 			if err != nil {
 				log.Printf("GetChan in ChaneStatus error %v", err)
 				panic(err)
 			}
 
 		}
-		resp := pb.StatusReply {
-			Token: req.Token,
-			Host: host,
+		resp := &pb.StatusReply{
+			Token: in.Token,
+			Host:  host,
 		}
-		if err := srv.Send(&resp); err != nil {
-			log.Printf("ChangeStatus send error %v", err)
-		}
+		return resp, nil
 	}
 
 	// TODO announce to host => invalid
 }
 
-func (s *server) Query(srv pb.Maintainer_QueryServer)  error {
-	ctx := srv.Context()
-	for {
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		default:
-		}
-		//receive data from stream
-		req, err := srv.Recv()
-		if err == io.EOF {
-			return nil
-		}
-		if err != nil {
-			log.Printf("Query receive error %v", err)
-			continue
-		}
-		name, err := s.state.Query(req.Token);
-		if err != nil {
-			panic(err)
-		}
-		host, err := s.hosts.Query(name);
-		if err != nil {
-			panic(err)
-		}
-		resp := pb.QueryReply{Token: req.Token, Host: host}
-		if err := srv.Send(&resp); err != nil {
-			log.Printf("Query send error %v", err)
-		}
+func (s *server) Query(ctx context.Context, in *pb.QueryRequest) (*pb.QueryReply, error) {
+	//receive data from stream
+	name, err := s.state.Query(in.Token)
+	if err != nil {
+		return nil, err
 	}
+	host, err := s.hosts.Query(name)
+	if err != nil {
+		return nil, err
+	}
+	resp := &pb.QueryReply{Token: in.Token, Host: host}
+	return resp, nil
 }
 
-func (s *server) Invalid(srv pb.Maintainer_InvalidServer)  error {
+func (s *server) Invalid(srv pb.Maintainer_InvalidServer) error {
 	ctx := srv.Context()
 	//receive data from stream
-	req, err := srv.Recv()	
+	req, err := srv.Recv()
 	if err == io.EOF {
 		return nil
 	}
@@ -130,30 +96,31 @@ func (s *server) Invalid(srv pb.Maintainer_InvalidServer)  error {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case token := <- invalidChannel: {	
-			resp := pb.InvalidReply{Token: token}
-			if err := srv.Send(&resp); err != nil {
-				log.Printf("Query send error %v", err)
+		case token := <-invalidChannel:
+			{
+				resp := pb.InvalidReply{Token: token}
+				if err := srv.Send(&resp); err != nil {
+					log.Printf("Query send error %v", err)
+				}
+				break
 			}
-			break
-		}
 		default:
 		}
 	}
 }
 
 func main() {
-    lis, err := net.Listen("tcp", PORT)
+	lis, err := net.Listen("tcp", PORT)
 
-    if err != nil {
-        log.Fatalf("failed to listen: %v", err)
-    }
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
 
-    s := grpc.NewServer()
-    pb.RegisterMaintainerServer(s, &server{
+	s := grpc.NewServer()
+	pb.RegisterMaintainerServer(s, &server{
 		state: &state.StateImpl{},
 		hosts: &state.HostImpl{},
 	})
-    log.Println("rpc服务已经开启")
-    s.Serve(lis)
+	log.Println("rpc服务已经开启")
+	s.Serve(lis)
 }
