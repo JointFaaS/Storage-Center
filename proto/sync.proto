@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = ".;status";
+package status;
+
+service Sync {
+    rpc Sync(SyncRequest) returns (SyncReply) {}
+}
+
+message SyncRequest {
+    string Token = 1;
+}
+
+message SyncReply {
+    string Value = 1;
+    int32 Code = 2;
+}
