@@ -5,20 +5,26 @@ import (
 	"log"
 
 	inter "github.com/JointFaaS/Storage-Center/inter"
+	"github.com/JointFaaS/Storage-Center/state"
 	pb "github.com/JointFaaS/Storage-Center/status"
 	"golang.org/x/net/context"
 )
 
-const (
-	// PORT defined for listen port
-	PORT = ":50000"
-)
-
+// RPCServer implement Tx-Server
 type RPCServer struct {
 	state inter.State
 	hosts inter.Host
 }
 
+// NewRPCServer will return pointer to RPCServer
+func NewRPCServer() *RPCServer {
+	return &RPCServer{
+		state: state.NewState(),
+		hosts: state.NewHost(),
+	}
+}
+
+// Register will store name and host
 func (s *RPCServer) Register(ctx context.Context, in *pb.RegisterRequest) (*pb.RegisterReply, error) {
 	log.Println("request: Name", in.Name)
 	log.Println("request: Host", in.Host)
@@ -29,6 +35,7 @@ func (s *RPCServer) Register(ctx context.Context, in *pb.RegisterRequest) (*pb.R
 	return &pb.RegisterReply{Code: 1, Msg: "OK"}, nil
 }
 
+// ChangeStatus will change ownership
 func (s *RPCServer) ChangeStatus(ctx context.Context, in *pb.StatusRequest) (*pb.StatusReply, error) {
 	for {
 
@@ -59,6 +66,7 @@ func (s *RPCServer) ChangeStatus(ctx context.Context, in *pb.StatusRequest) (*pb
 	// TODO announce to host => invalid
 }
 
+// Query state and storage
 func (s *RPCServer) Query(ctx context.Context, in *pb.QueryRequest) (*pb.QueryReply, error) {
 	//receive data from stream
 	name, err := s.state.Query(in.Token)
@@ -73,6 +81,7 @@ func (s *RPCServer) Query(ctx context.Context, in *pb.QueryRequest) (*pb.QueryRe
 	return resp, nil
 }
 
+// Invalid stream will return the invalid key for your onw host
 func (s *RPCServer) Invalid(srv pb.Maintainer_InvalidServer) error {
 	ctx := srv.Context()
 	//receive data from stream

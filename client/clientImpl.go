@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"log"
 	"net"
 	"sync"
@@ -13,6 +12,7 @@ import (
 	pb "github.com/JointFaaS/Storage-Center/status"
 	mapset "github.com/deckarep/golang-set"
 	"google.golang.org/grpc"
+	retry "gopkg.in/matryer/try.v1"
 )
 
 // SyncRPCServer implement method
@@ -95,8 +95,9 @@ func (c *ClientImpl) Start(ctx context.Context, wg *sync.WaitGroup) error {
 		// create stream
 		c.client = pb.NewMaintainerClient(conn)
 	}
-	retry := 10
-	for ; retry > 0; retry-- {
+	// retry-library refactor
+	err := retry.Do(func(attempt int) (retry bool, err error) {
+		retry = attempt < 5
 		resp, err := c.client.Register(ctx, &pb.RegisterRequest{Name: c.name, Host: c.clientHost + c.clientPort})
 		if err != nil {
 			log.Printf("open stream error %v", err)
@@ -105,39 +106,34 @@ func (c *ClientImpl) Start(ctx context.Context, wg *sync.WaitGroup) error {
 			log.Printf("register %s over", c.name)
 		} else {
 			log.Printf("register error : %s\n", resp.Msg)
-			return errors.New("register error")
+			err = errors.New("register error")
 		}
-		break
-	}
-	if retry == 0 {
-		log.Fatalf("register error, closed")
+		return
+	})
+	if err != nil {
+		log.Printf("register error, closed")
 		return errors.New("connection refused")
 	}
 
 	wg.Add(1)
 	go func(wg *sync.WaitGroup) {
 		defer wg.Done()
-		retry = 10
 		var invalidStream pb.Maintainer_InvalidClient
 		var err error
-		for ; retry > 0; retry-- {
+		err = retry.Do(func(attempt int) (retry bool, err error) {
+			retry = attempt < 5
 			invalidStream, err = c.client.Invalid(ctx)
-			if err != nil {
-				log.Printf("open stream error %v", err)
-				continue
-			}
-			break
-		}
+			return
+		})
 
-		if retry == 0 {
+		if err != nil {
 			log.Println("error in stream open, close")
 			return
 		}
 
-		if err := invalidStream.Send(&pb.InvalidRequest{Name: c.name}); err != nil {
+		if err = invalidStream.Send(&pb.InvalidRequest{Name: c.name}); err != nil {
 			log.Fatalf("can not send %v", err)
 		}
-		retry = 10
 
 		for {
 			select {
@@ -147,31 +143,28 @@ func (c *ClientImpl) Start(ctx context.Context, wg *sync.WaitGroup) error {
 				}
 			default:
 				{
-					resp, err := invalidStream.Recv()
-					log.Printf("130")
-					if err == io.EOF {
-						return
-					}
-					if err != nil {
-						log.Printf("can not receive %v", err)
-						retry--
-						if retry == 0 {
-							log.Printf("can not receive, closed")
+					var token string
+					err := retry.Do(func(attempt int) (retry bool, err error) {
+						retry = attempt < 5
+						resp, err := invalidStream.Recv()
+						if err != nil {
+							log.Printf("can not receive %v", err)
 							return
 						}
-						continue
-					}
-					retry = 10
-					token := resp.Token
-					// log.Printf("new invalid token %s received", token)
+						token = resp.Token
+						return
+					})
 					if token == "" {
 						continue
+					}
+					if err != nil {
+						log.Fatalf("can not get invalid message: %v\n", err)
 					}
 					// delete line by token
 					c.state.Delete(token)
 					err = c.storage.Delete(token)
 					if err != nil {
-						log.Fatalf("can not delete %v in storage", err)
+						log.Fatalf("can not delete %v in storage\n", err)
 					}
 				}
 			}
@@ -180,6 +173,7 @@ func (c *ClientImpl) Start(ctx context.Context, wg *sync.WaitGroup) error {
 	return nil
 }
 
+// ChangeStatus will change the ownership of key
 func (c *ClientImpl) ChangeStatus(ctx context.Context, token string) error {
 	if c.client == nil {
 		return errors.New("client not init, should call Start first")

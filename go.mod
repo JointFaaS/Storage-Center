@@ -9,4 +9,5 @@ require (
 	golang.org/x/net v0.0.0-20190311183353-d8887717615a
 	google.golang.org/grpc v1.28.1
 	google.golang.org/protobuf v1.21.0
+	gopkg.in/matryer/try.v1 v1.0.0-20150601225556-312d2599e12e
 )

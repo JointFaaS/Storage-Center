@@ -50,8 +50,8 @@ func Test_Init(t *testing.T) {
 }
 
 func Test_Simple_Create_Pair(t *testing.T) {
-	key := "casecloud"
-	storageValue := "nmsl"
+	key := "animal"
+	storageValue := "pig"
 	clientHost := "127.0.0.1"
 	clientPort := ":50001"
 	ctrl := gomock.NewController(t)
@@ -99,8 +99,8 @@ func Test_Simple_Create_Pair(t *testing.T) {
 }
 
 func Test_Get_Value_From_Others(t *testing.T) {
-	key := "casecloud"
-	storageValue := "nmsl"
+	key := "animal"
+	storageValue := "pig"
 	clientHost1 := "127.0.0.1"
 	clientPort1 := ":50001"
 	clientHost2 := "127.0.0.1"

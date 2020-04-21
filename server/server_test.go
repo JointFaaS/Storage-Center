@@ -39,8 +39,8 @@ func Test_Init(t *testing.T) {
 }
 
 func Test_Single_Client(t *testing.T) {
-	key := "casecloud"
-	storageValue := "nmsl"
+	key := "animal"
+	storageValue := "pig"
 	lis, err := net.Listen("tcp", ":50000")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -83,8 +83,8 @@ func Test_Single_Client(t *testing.T) {
 }
 
 func Test_Two_Client_With_One_Set_And_One_Get(t *testing.T) {
-	key := "casecloud"
-	storageValue := "nmsl"
+	key := "animal"
+	storageValue := "pig"
 	lis, err := net.Listen("tcp", ":50000")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -136,9 +136,9 @@ func Test_Two_Client_With_One_Set_And_One_Get(t *testing.T) {
 }
 
 func Test_Two_Client_Double_Set(t *testing.T) {
-	key := "casecloud"
-	storageValue := "nmsl"
-	reverseValue := "lsmn"
+	key := "animal"
+	storageValue := "pig"
+	reverseValue := "dog"
 	lis, err := net.Listen("tcp", ":50000")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
