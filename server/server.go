@@ -49,10 +49,23 @@ func (s *RPCServer) ChangeStatus(ctx context.Context, in *pb.StatusRequest) (*pb
 		}
 		if oldname != "" {
 			channel, err := s.hosts.GetChan(oldname)
-			channel <- in.Token
 			if err != nil {
 				log.Printf("GetChan in ChaneStatus error %v", err)
 				panic(err)
+			}
+			returnChan := make(chan int8)
+			channel <- state.InvalidEntry{
+				Token:   in.Token,
+				Channel: returnChan,
+			}
+			invalidCode := <-returnChan
+			if invalidCode < 0 {
+				resp := &pb.StatusReply{
+					Token:   in.Token,
+					Host:    oldname,
+					Version: 0,
+				}
+				return resp, nil
 			}
 		}
 		resp := &pb.StatusReply{
@@ -62,8 +75,6 @@ func (s *RPCServer) ChangeStatus(ctx context.Context, in *pb.StatusRequest) (*pb
 		}
 		return resp, nil
 	}
-
-	// TODO announce to host => invalid
 }
 
 // Query state and storage
@@ -107,11 +118,20 @@ func (s *RPCServer) Invalid(srv pb.Maintainer_InvalidServer) error {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case token := <-invalidChannel:
+		case invalidEntry := <-invalidChannel:
 			{
-				resp := pb.InvalidReply{Token: token}
+				resp := pb.InvalidReply{Token: invalidEntry.Token}
 				if err := srv.Send(&resp); err != nil {
 					log.Printf("Query send error %v", err)
+					invalidEntry.Channel <- -1
+				} else {
+					// waiting for recv
+					returnReq, err := srv.Recv()
+					if returnReq.Token != invalidEntry.Token && err == nil {
+						invalidEntry.Channel <- 1
+					} else {
+						invalidEntry.Channel <- -1
+					}
 				}
 				break
 			}

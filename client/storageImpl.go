@@ -11,6 +11,12 @@ type StorageImpl struct {
 	storage map[string]string
 }
 
+func NewStorageImpl() *StorageImpl {
+	return &StorageImpl{
+		storage: make(map[string]string),
+	}
+}
+
 // Set key
 func (s *StorageImpl) Set(token string, value string) {
 	s.Lock()

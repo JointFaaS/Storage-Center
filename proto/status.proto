@@ -43,6 +43,7 @@ message QueryReply {
 
 message InvalidRequest {
     string Name = 1;
+    string Token = 2;
 }
 
 message InvalidReply {

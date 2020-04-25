@@ -1,6 +1,7 @@
 package mock_status
 
 import (
+	"fmt"
 	"testing"
 
 	client "github.com/JointFaaS/Storage-Center/client"
@@ -62,7 +63,7 @@ func Test_Simple_Create_Pair(t *testing.T) {
 	mockMaintainerClient.EXPECT().ChangeStatus(
 		gomock.Any(),
 		gomock.Any(),
-	).Return(&pb.StatusReply{Token: key, Host: clientHost, Version: 1}, nil)
+	).Return(&pb.StatusReply{Token: key, Host: clientHost + clientPort, Version: 1}, nil)
 	mockMaintainerClient.EXPECT().Query(
 		gomock.Any(),
 		gomock.Any(),
@@ -78,10 +79,14 @@ func Test_Simple_Create_Pair(t *testing.T) {
 	if err != nil {
 		t.Errorf(err.Error())
 	}
+	fmt.Println("---START SET---")
+
 	err = c.Set(key, storageValue)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
+
+	fmt.Println("---START GET---")
 	value, err := c.Get(key)
 	if err != nil {
 		t.Errorf(err.Error())
@@ -121,7 +126,7 @@ func Test_Get_Value_From_Others(t *testing.T) {
 	mockMaintainerClient.EXPECT().ChangeStatus(
 		gomock.Any(),
 		gomock.Any(),
-	).Return(&pb.StatusReply{Token: key, Host: clientHost1, Version: 1}, nil).AnyTimes()
+	).Return(&pb.StatusReply{Token: key, Host: clientHost1 + clientPort1, Version: 1}, nil).AnyTimes()
 	mockMaintainerClient.EXPECT().Invalid(
 		gomock.Any(),
 	).Return(stream, nil).AnyTimes()
@@ -135,6 +140,7 @@ func Test_Get_Value_From_Others(t *testing.T) {
 	if err != nil {
 		t.Errorf(err.Error())
 	}
+	fmt.Println("---START SET---")
 	err = c1.Set(key, storageValue)
 	if err != nil {
 		t.Errorf(err.Error())
@@ -143,6 +149,7 @@ func Test_Get_Value_From_Others(t *testing.T) {
 	if err != nil {
 		t.Errorf(err.Error())
 	}
+	fmt.Println("---START GET---")
 	value, err := c2.Get(key)
 	if err != nil {
 		t.Errorf(err.Error())

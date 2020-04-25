@@ -5,10 +5,16 @@ import (
 	"fmt"
 )
 
+// InvalidEntry add channel in the struct
+type InvalidEntry struct {
+	Token   string
+	Channel chan int8
+}
+
 // StatusLine store host and chan
 type StatusLine struct {
 	host           string
-	invalidChannel chan string
+	invalidChannel chan InvalidEntry
 }
 
 // HostImpl maintain all hosts mapping name <=> host
@@ -33,7 +39,7 @@ func (h *HostImpl) Insert(host string, name string) error {
 	fmt.Printf("Host %v, Name %v\n", host, name)
 	h.hosts[name] = StatusLine{
 		host:           host,
-		invalidChannel: make(chan string, 100),
+		invalidChannel: make(chan InvalidEntry, 100),
 	}
 	return nil
 }
@@ -58,7 +64,7 @@ func (h *HostImpl) Delete(name string) error {
 }
 
 // GetChan return channel for invalid communication
-func (h *HostImpl) GetChan(name string) (chan string, error) {
+func (h *HostImpl) GetChan(name string) (chan InvalidEntry, error) {
 	value, exist := h.hosts[name]
 	if exist {
 		return value.invalidChannel, nil
