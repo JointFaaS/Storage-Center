@@ -10,7 +10,6 @@ import (
 
 	inter "github.com/JointFaaS/Storage-Center/inter"
 	pb "github.com/JointFaaS/Storage-Center/status"
-	mapset "github.com/deckarep/golang-set"
 	"google.golang.org/grpc"
 	retry "gopkg.in/matryer/try.v1"
 )
@@ -18,16 +17,23 @@ import (
 // SyncRPCServer implement method
 type SyncRPCServer struct {
 	storage inter.Storage
+	state   inter.ClientState
 }
 
 // Sync data to other client
 func (s *SyncRPCServer) Sync(ctx context.Context, in *pb.SyncRequest) (*pb.SyncReply, error) {
 	// TODO check state first
-	value, err := s.storage.Get(in.Token)
-	if err != nil {
-		return &pb.SyncReply{Value: "", Code: -1}, err
+	version := s.state.GetVersion(in.Token)
+	if version != 0 {
+		value, err := s.storage.Get(in.Token)
+		if err != nil {
+			return &pb.SyncReply{Value: "", Code: -1}, err
+		}
+		return &pb.SyncReply{Value: value, Code: 1}, nil
+	} else {
+		// cocurrent invalid
+		return &pb.SyncReply{Value: "", Code: -2}, nil
 	}
-	return &pb.SyncReply{Value: value, Code: 1}, nil
 }
 
 type ClientImpl struct {
@@ -48,7 +54,7 @@ func NewClientImpl(name string, clientHost string, clientPort string, serverHost
 		clientHost: clientHost,
 		serverHost: serverHost,
 		state: &ClientStateImpl{
-			holds: mapset.NewSet(),
+			holds: make(map[string]uint64),
 		},
 		storage: &StorageImpl{
 			storage: make(map[string]string),
@@ -57,6 +63,7 @@ func NewClientImpl(name string, clientHost string, clientPort string, serverHost
 	}
 }
 
+// Start Server
 func (c *ClientImpl) Start(ctx context.Context, wg *sync.WaitGroup) error {
 	// dail server
 	wg.Add(1)
@@ -71,7 +78,7 @@ func (c *ClientImpl) Start(ctx context.Context, wg *sync.WaitGroup) error {
 
 		syncServer := grpc.NewServer()
 		wg.Add(1)
-		pb.RegisterSyncServer(syncServer, &SyncRPCServer{storage: c.storage})
+		pb.RegisterSyncServer(syncServer, &SyncRPCServer{storage: c.storage, state: c.state})
 		go func() {
 			defer wg.Done()
 			select {
@@ -191,11 +198,12 @@ func (c *ClientImpl) ChangeStatus(ctx context.Context, token string) error {
 		log.Fatalf("could not changeStatus: %v", err)
 		return err
 	}
-	fmt.Printf("resp.Host %v, clientHost %v\n", resp.Host, c.clientHost)
+	fmt.Printf("resp.Host %v, clientHost %v\n", resp.Host, c.clientHost+c.clientPort)
 	// TODO update state use resp.Token and resp.Host
-	if resp.Host == c.clientHost {
+	if resp.Host == c.clientHost+c.clientPort {
 		// we hold the status
-		c.state.Add(resp.Token)
+		fmt.Printf("ChangeStatus version is %v\n", resp.Version)
+		c.state.Add(resp.Token, resp.Version)
 		hold := c.state.Query(resp.Token)
 		fmt.Printf("after add into set %v\n", hold)
 	}
@@ -205,30 +213,32 @@ func (c *ClientImpl) ChangeStatus(ctx context.Context, token string) error {
 // Query first query from local, if it does not exist, it will sync from others
 func (c *ClientImpl) Query(ctx context.Context, token string) (string, error) {
 	// query local first holded means can read/write
-	holded := c.state.Query(token)
-	fmt.Printf("in query holded %v", holded)
-	if holded {
-		return c.storage.Get(token)
-	}
-	// local does not contains token value
-	if c.client == nil {
-		return "", errors.New("client not init, should call Start first")
-	}
-	resp, err := c.client.Query(ctx, &pb.QueryRequest{Token: token})
-	if err != nil {
-		log.Fatalf("could not changeStatus: %v", err)
-		return "", err
-	}
-	// TODO call other client to get the data
-	conn, err := grpc.Dial(resp.Host, grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("can not connect with server %v", err)
-		return resp.Host, err
-	}
-	// create stream
-	syncClient := pb.NewSyncClient(conn)
-	// ugly forever loop to retry for capable server start racing
 	for {
+		holded := c.state.Query(token)
+		if c.client == nil {
+			return "", errors.New("client not init, should call Start first")
+		}
+		fmt.Printf("in query holded %v\n", holded)
+
+		resp, err := c.client.Query(ctx, &pb.QueryRequest{Token: token})
+		if err != nil {
+			log.Fatalf("could not changeStatus: %v", err)
+			return "", err
+		}
+		log.Printf("local version is %v, remote version is %v\n", c.state.GetVersion(token), resp.Version)
+		if c.state.GetVersion(token) == resp.Version {
+			return c.storage.Get(token)
+		}
+
+		// TODO call other client to get the data
+		conn, err := grpc.Dial(resp.Host, grpc.WithInsecure())
+		if err != nil {
+			log.Fatalf("can not connect with server %v", err)
+			return resp.Host, err
+		}
+		// create stream
+		syncClient := pb.NewSyncClient(conn)
+		// ugly forever loop to retry for capable server start racing
 		syncResp, err := syncClient.Sync(context.Background(), &pb.SyncRequest{Token: token})
 		if err != nil {
 			log.Printf("sync server error: %v", err)

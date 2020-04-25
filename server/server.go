@@ -39,7 +39,7 @@ func (s *RPCServer) Register(ctx context.Context, in *pb.RegisterRequest) (*pb.R
 func (s *RPCServer) ChangeStatus(ctx context.Context, in *pb.StatusRequest) (*pb.StatusReply, error) {
 	for {
 
-		newname, oldname, err := s.state.ChangeStatus(in.Token, in.Name)
+		newname, oldname, newVersion, _, err := s.state.ChangeStatus(in.Token, in.Name)
 		if err != nil {
 			panic(err)
 		}
@@ -54,11 +54,11 @@ func (s *RPCServer) ChangeStatus(ctx context.Context, in *pb.StatusRequest) (*pb
 				log.Printf("GetChan in ChaneStatus error %v", err)
 				panic(err)
 			}
-
 		}
 		resp := &pb.StatusReply{
-			Token: in.Token,
-			Host:  host,
+			Token:   in.Token,
+			Host:    host,
+			Version: newVersion,
 		}
 		return resp, nil
 	}
@@ -69,7 +69,7 @@ func (s *RPCServer) ChangeStatus(ctx context.Context, in *pb.StatusRequest) (*pb
 // Query state and storage
 func (s *RPCServer) Query(ctx context.Context, in *pb.QueryRequest) (*pb.QueryReply, error) {
 	//receive data from stream
-	name, err := s.state.Query(in.Token)
+	name, version, err := s.state.Query(in.Token)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,12 @@ func (s *RPCServer) Query(ctx context.Context, in *pb.QueryRequest) (*pb.QueryRe
 	if err != nil {
 		return nil, err
 	}
-	resp := &pb.QueryReply{Token: in.Token, Host: host}
+
+	resp := &pb.QueryReply{
+		Token:   in.Token,
+		Host:    host,
+		Version: version,
+	}
 	return resp, nil
 }
 

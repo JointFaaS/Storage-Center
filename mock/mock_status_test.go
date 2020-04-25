@@ -29,17 +29,6 @@ func Test_Init(t *testing.T) {
 		gomock.Any(),
 	).Return(stream, nil).AnyTimes()
 
-	// // for missing call
-	// invalidStream, err := mockMaintainerClient.Invalid(context.Background())
-	// if err != nil {
-	// 	t.Errorf("openn stream error %v", err)
-	// }
-
-	// if err := invalidStream.Send(&pb.InvalidRequest{Name: "test"}); err != nil {
-	// 	t.Errorf("can not send %v", err)
-	// }
-	// _, err = invalidStream.Recv()
-
 	var c inter.UserClient
 	c = client.NewUserClientImpl("test", "127.0.0.1", ":50001", "127.0.0.1:50000", mockMaintainerClient)
 	err := c.Start()
@@ -73,7 +62,11 @@ func Test_Simple_Create_Pair(t *testing.T) {
 	mockMaintainerClient.EXPECT().ChangeStatus(
 		gomock.Any(),
 		gomock.Any(),
-	).Return(&pb.StatusReply{Token: key, Host: clientHost}, nil)
+	).Return(&pb.StatusReply{Token: key, Host: clientHost, Version: 1}, nil)
+	mockMaintainerClient.EXPECT().Query(
+		gomock.Any(),
+		gomock.Any(),
+	).Return(&pb.QueryReply{Token: key, Host: clientHost + clientPort, Version: 1}, nil).AnyTimes()
 	mockMaintainerClient.EXPECT().Invalid(
 		gomock.Any(),
 	).Return(stream, nil)
@@ -124,11 +117,11 @@ func Test_Get_Value_From_Others(t *testing.T) {
 	mockMaintainerClient.EXPECT().Query(
 		gomock.Any(),
 		gomock.Any(),
-	).Return(&pb.QueryReply{Token: key, Host: clientHost1 + clientPort1}, nil).AnyTimes()
+	).Return(&pb.QueryReply{Token: key, Host: clientHost1 + clientPort1, Version: 1}, nil).AnyTimes()
 	mockMaintainerClient.EXPECT().ChangeStatus(
 		gomock.Any(),
 		gomock.Any(),
-	).Return(&pb.StatusReply{Token: key, Host: clientHost1}, nil).AnyTimes()
+	).Return(&pb.StatusReply{Token: key, Host: clientHost1, Version: 1}, nil).AnyTimes()
 	mockMaintainerClient.EXPECT().Invalid(
 		gomock.Any(),
 	).Return(stream, nil).AnyTimes()
