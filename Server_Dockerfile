@@ -1,0 +1,9 @@
+FROM golang:1.13
+
+WORKDIR /go/src/app
+
+COPY . .
+
+RUN make server
+
+CMD ["/go/src/app/server"]
