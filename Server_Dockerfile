@@ -6,4 +6,4 @@ COPY . .
 
 RUN make server
 
-ENTRYPOINT ["/go/src/app/server"]
+ENTRYPOINT ["/go/src/app/build/server"]

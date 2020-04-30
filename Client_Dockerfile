@@ -6,4 +6,4 @@ COPY . .
 
 RUN make client
 
-ENTRYPOINT ["/go/src/app/client"]
+ENTRYPOINT ["/go/src/app/build/client"]
