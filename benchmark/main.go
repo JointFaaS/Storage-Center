@@ -26,13 +26,21 @@ var randomCmd = &cobra.Command{
 	Use: "random",
 	Short: "random test",
 	Run: func(cmd *cobra.Command, args []string) {
-
+		
 	},
 }
 
 var localityCmd = &cobra.Command{
 	Use: "locality",
 	Short: "locality test",
+	Run: func(cmd *cobra.Command, args []string) {
+		
+	},
+}
+
+var worstCmd = &cobra.Command{
+	Use: "worst",
+	Short: "worst test",
 	Run: func(cmd *cobra.Command, args []string) {
 
 	},

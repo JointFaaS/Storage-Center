@@ -15,5 +15,6 @@ services:
     cap_add:
     - NET_ADMIN
   benchmark:
-    build: .
-    entrypoint: 
+    build:
+      dockerfile: Dockerfile
+      context: ../
