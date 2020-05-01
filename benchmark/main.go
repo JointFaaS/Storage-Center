@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/JointFaaS/Storage-Center/benchmark/utils"
 	"github.com/spf13/cobra"
@@ -31,6 +32,8 @@ var randomCmd = &cobra.Command{
 		var m map[string]string = make(map[string]string)
 		var count int = 100
 		var length int = len(*clients)
+		var timeSlice []time.Duration = make([]time.Duration, 100, 100)
+		start := time.Now()
 		for i := 0; i < count; i++ {
 			key := strconv.FormatInt(rand.Int63(), 10)
 			index := rand.Int() % length
@@ -46,6 +49,7 @@ var randomCmd = &cobra.Command{
 					log.Printf("Unexpected Value %s, the record is %s", *s, m[key])
 				}
 			}
+			timeSlice[i] = time.Since(start)
 		}
 	},
 }
@@ -67,7 +71,7 @@ var worstCmd = &cobra.Command{
 }
 
 func clientInit() {
-	*clients = make([]*utils.Client, len(*clientAddr))
+	*clients = make([]*utils.Client, 0, len(*clientAddr))
 	for _, addr := range *clientAddr {
 		*clients = append(*clients, utils.NewClient(addr))
 		log.Printf("add client '%s'", addr)
