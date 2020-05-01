@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
+	"strconv"
 
-	"github.com/spf13/cobra"
 	"github.com/JointFaaS/Storage-Center/benchmark/utils"
+	"github.com/spf13/cobra"
 )
 
 var (
@@ -26,7 +28,25 @@ var randomCmd = &cobra.Command{
 	Use: "random",
 	Short: "random test",
 	Run: func(cmd *cobra.Command, args []string) {
-		
+		var m map[string]string = make(map[string]string)
+		var count int = 100
+		var length int = len(*clients)
+		for i := 0; i < count; i++ {
+			key := strconv.FormatInt(rand.Int63(), 10)
+			index := rand.Int() % length
+			m[key] = strconv.FormatInt(rand.Int63(), 10)
+			(*clients)[index].Set(key, m[key])
+
+			for j := 0; j < 3; j++ {
+				index = rand.Int() % length
+				s, err := (*clients)[index].Get(key)
+				if err != nil {
+					panic(err)
+				} else if (*s != m[key]) {
+					log.Printf("Unexpected Value %s, the record is %s", *s, m[key])
+				}
+			}
+		}
 	},
 }
 
@@ -34,7 +54,7 @@ var localityCmd = &cobra.Command{
 	Use: "locality",
 	Short: "locality test",
 	Run: func(cmd *cobra.Command, args []string) {
-		
+
 	},
 }
 

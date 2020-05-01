@@ -1,10 +1,12 @@
 # !/bin/bash
 
 docker-compose down
-docker-compose up -d
+docker-compose up -d server
 
-echo 'wait 5s before testing'
+echo 'wait 5s before serve ready'
 sleep 5
+
+docker-compose up -d
 
 echo 'apply linux tc'
 
