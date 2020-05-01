@@ -46,10 +46,13 @@ var randomCmd = &cobra.Command{
 				if err != nil {
 					panic(err)
 				} else if (*s != m[key]) {
-					log.Printf("Unexpected Value %s, the record is %s", *s, m[key])
+					log.Printf("Unexpected Value %s, the record is %s\n", *s, m[key])
 				}
 			}
 			timeSlice[i] = time.Since(start)
+		}
+		for _, t := range timeSlice {
+			log.Println(t)
 		}
 	},
 }
