@@ -3,8 +3,8 @@
 ## Start Example
 
 ``` bash
-go run server_main.go
-go run client_main.go
+go run server_app/server.go
+go run client_app/client.go
 ```
 
 You can use go run *_main.go -h to see the usage

@@ -1,0 +1,26 @@
+version: "2"
+services:
+  client1:
+    image: docker.pkg.github.com/jointfaas/storage-center/client:latest
+    cap_add:
+    - NET_ADMIN
+    command: ['-n', 'client1', '-H', 'client1', '-r', 'server:50000']
+    depends_on:
+      - server
+  client2:
+    image: docker.pkg.github.com/jointfaas/storage-center/client:latest
+    cap_add:
+    - NET_ADMIN
+    command: ['-n', 'client2', '-H', 'client2', '-r', 'server:50000']
+    depends_on:
+      - server
+  server:
+    image: docker.pkg.github.com/jointfaas/storage-center/server:latest
+    cap_add:
+    - NET_ADMIN
+  benchmark:
+    image: docker.pkg.github.com/jointfaas/storage-center/tester:latest
+    entrypoint: ['/bin/sh', '-c', 'sleep 3600']
+    depends_on:
+      - client1
+      - client2
