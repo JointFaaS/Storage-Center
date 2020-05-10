@@ -2,36 +2,45 @@ package state
 
 import (
 	"errors"
+	"sync"
 )
+
+type entry struct {
+	Name    string
+	Version uint64
+}
 
 // StateImpl maintain metadata in memory
 type StateImpl struct {
-	metadata map[string]string
+	sync.Mutex
+	metadata map[string]entry
 }
 
 // NewState is a support function
 func NewState() *StateImpl {
 	return &StateImpl{
-		metadata: map[string]string{},
+		metadata: map[string]entry{},
 	}
 }
 
 // ChangeStatus update the state in the metadata, which will check the state machine is right.
-func (state *StateImpl) ChangeStatus(token string, name string) (string, string, error) {
+func (state *StateImpl) ChangeStatus(token string, name string) (string, string, uint64, uint64, error) {
+	state.Lock()
+	defer state.Unlock()
 	old, exist := state.metadata[token]
-	state.metadata[token] = name
 	if exist {
-		return name, old, nil
+		state.metadata[token] = entry{Name: name, Version: old.Version + 1}
+		return name, old.Name, old.Version + 1, old.Version, nil
 	}
-	return name, "", nil
-
+	state.metadata[token] = entry{Name: name, Version: 1}
+	return name, "", 1, 0, nil
 }
 
 // Query returns the host
-func (state *StateImpl) Query(token string) (string, error) {
+func (state *StateImpl) Query(token string) (string, uint64, error) {
 	value, exist := state.metadata[token]
 	if exist {
-		return value, nil
+		return value.Name, value.Version, nil
 	}
-	return "", errors.New("token area not exist")
+	return "", 0, errors.New("token area not exist")
 }

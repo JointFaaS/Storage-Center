@@ -39,7 +39,7 @@ func (s *RPCServer) Register(ctx context.Context, in *pb.RegisterRequest) (*pb.R
 func (s *RPCServer) ChangeStatus(ctx context.Context, in *pb.StatusRequest) (*pb.StatusReply, error) {
 	for {
 
-		newname, oldname, err := s.state.ChangeStatus(in.Token, in.Name)
+		newname, oldname, newVersion, _, err := s.state.ChangeStatus(in.Token, in.Name)
 		if err != nil {
 			panic(err)
 		}
@@ -49,27 +49,38 @@ func (s *RPCServer) ChangeStatus(ctx context.Context, in *pb.StatusRequest) (*pb
 		}
 		if oldname != "" {
 			channel, err := s.hosts.GetChan(oldname)
-			channel <- in.Token
 			if err != nil {
 				log.Printf("GetChan in ChaneStatus error %v", err)
 				panic(err)
 			}
-
+			returnChan := make(chan int8)
+			channel <- state.InvalidEntry{
+				Token:   in.Token,
+				Channel: returnChan,
+			}
+			invalidCode := <-returnChan
+			if invalidCode < 0 {
+				resp := &pb.StatusReply{
+					Token:   in.Token,
+					Host:    oldname,
+					Version: 0,
+				}
+				return resp, nil
+			}
 		}
 		resp := &pb.StatusReply{
-			Token: in.Token,
-			Host:  host,
+			Token:   in.Token,
+			Host:    host,
+			Version: newVersion,
 		}
 		return resp, nil
 	}
-
-	// TODO announce to host => invalid
 }
 
 // Query state and storage
 func (s *RPCServer) Query(ctx context.Context, in *pb.QueryRequest) (*pb.QueryReply, error) {
 	//receive data from stream
-	name, err := s.state.Query(in.Token)
+	name, version, err := s.state.Query(in.Token)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +88,12 @@ func (s *RPCServer) Query(ctx context.Context, in *pb.QueryRequest) (*pb.QueryRe
 	if err != nil {
 		return nil, err
 	}
-	resp := &pb.QueryReply{Token: in.Token, Host: host}
+
+	resp := &pb.QueryReply{
+		Token:   in.Token,
+		Host:    host,
+		Version: version,
+	}
 	return resp, nil
 }
 
@@ -102,11 +118,20 @@ func (s *RPCServer) Invalid(srv pb.Maintainer_InvalidServer) error {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case token := <-invalidChannel:
+		case invalidEntry := <-invalidChannel:
 			{
-				resp := pb.InvalidReply{Token: token}
+				resp := pb.InvalidReply{Token: invalidEntry.Token}
 				if err := srv.Send(&resp); err != nil {
 					log.Printf("Query send error %v", err)
+					invalidEntry.Channel <- -1
+				} else {
+					// waiting for recv
+					returnReq, err := srv.Recv()
+					if returnReq.Token != invalidEntry.Token && err == nil {
+						invalidEntry.Channel <- 1
+					} else {
+						invalidEntry.Channel <- -1
+					}
 				}
 				break
 			}

@@ -28,6 +28,7 @@ message StatusRequest {
 message StatusReply {
     string Token = 1;
     string Host = 2;
+    uint64 Version = 3;
 }
 
 message QueryRequest {
@@ -37,10 +38,12 @@ message QueryRequest {
 message QueryReply {
     string Token = 1;
     string Host = 2;
+    uint64 Version = 3;
 }
 
 message InvalidRequest {
-    string name = 1;
+    string Name = 1;
+    string Token = 2;
 }
 
 message InvalidReply {

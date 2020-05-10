@@ -7,8 +7,14 @@ import (
 
 // StorageImpl is an type of storage using simple map and Mutex
 type StorageImpl struct {
-	sync.RWMutex
+	sync.Mutex
 	storage map[string]string
+}
+
+func NewStorageImpl() *StorageImpl {
+	return &StorageImpl{
+		storage: make(map[string]string),
+	}
 }
 
 // Set key
@@ -20,9 +26,9 @@ func (s *StorageImpl) Set(token string, value string) {
 
 // Get value by key
 func (s *StorageImpl) Get(token string) (string, error) {
-	s.RLock()
+	s.Lock()
 	value, exist := s.storage[token]
-	s.RUnlock()
+	s.Unlock()
 	if exist {
 		return value, nil
 	}

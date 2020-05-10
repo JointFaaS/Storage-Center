@@ -178,12 +178,22 @@ func Test_Two_Client_Double_Set(t *testing.T) {
 		t.Errorf(err.Error())
 	}
 
+	val, err := c1.Get(key)
+
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	if val != storageValue {
+		t.Errorf("value %v should be %v\n", val, storageValue)
+	}
+
 	err = c2.Set(key, reverseValue)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
 
-	val, err := c1.Get(key)
+	val, err = c1.Get(key)
 
 	if err != nil {
 		t.Errorf(err.Error())
